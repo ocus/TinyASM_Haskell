@@ -6,21 +6,21 @@ where
 
 import Text.Printf (printf)
 
-data ByteCode = BC1 Integer
-              | BC2 Integer Integer
-              | BC3 Integer Integer Integer
-              | BC4 Integer Integer Integer Integer
+data ByteCode = BC1 Int
+              | BC2 Int Int
+              | BC3 Int Int Int
+              | BC4 Int Int Int Int
 
 instance Show ByteCode where
   show (BC1 op)       = "ByteCode " ++ (showHex op)
-  show (BC2 op b)     = (show $ BC1 op) ++ " " ++ (show b)
-  show (BC3 op b c)   = (show $ BC2 op b) ++ " " ++ (show c)
-  show (BC4 op b c d) = (show $ BC3 op b c) ++ " " ++ (show d)
+  show (BC2 op b)     = (show $ BC1 op) ++ " " ++ (showHex b)
+  show (BC3 op b c)   = (show $ BC2 op b) ++ " " ++ (showHex c)
+  show (BC4 op b c d) = (show $ BC3 op b c) ++ " " ++ (showHex d)
 
 class Compilable a where
   toString :: a -> String
-  size :: a -> Integer
-  compile :: a -> [Integer]
+  size :: a -> Int
+  compile :: a -> [Int]
 
 instance Compilable ByteCode where
   toString (BC1 op)       = showHex op
@@ -38,5 +38,5 @@ instance Compilable ByteCode where
   compile (BC3 op b c)   = [op, b, c]
   compile (BC4 op b c d) = [op, b, c, d]
 
-showHex :: Integer -> String
+showHex :: Int -> String
 showHex = printf "0x%02x"

@@ -11,10 +11,10 @@ import TinyASM.Instruction
 parse :: String -> [Instruction]
 parse "" = []
 parse content = case readP_to_S instructions content of
-    [] -> []
-    result -> case last result of
-      (_, remains@(_:_)) -> error $ show $ "Parsing error at: " ++ remains
-      (parsed, _) -> fmap extractInstruction parsed
+  [] -> []
+  result -> case last result of
+    (_, remains@(_:_)) -> error $ show $ "Parsing error at: " ++ remains
+    (parsed, _) -> fmap extractInstruction parsed
 
 extractInstruction :: (Either String Instruction) -> Instruction
 extractInstruction (Left e) = error e
@@ -22,35 +22,40 @@ extractInstruction (Right i) = i
 
 instructions :: ReadP [(Either String Instruction)]
 instructions = do
-    is <- sepBy instruction $ many1 $ string "\n"
-    _ <- option "" $ string "\n"
-    return (is)
+  is <- sepBy numberedInstruction $ many1 $ string "\n"
+  _ <- option "" $ string "\n"
+  return (is)
+
+numberedInstruction :: ReadP (Either String Instruction)
+numberedInstruction = do
+  i <- instruction
+  return (i)
 
 instruction :: ReadP (Either String Instruction)
 instruction = do
-    i  <- (instructionWith2Arguments "AND" And)
-      <|> (instructionWith2Arguments "OR" Or)
-      <|> (instructionWith2Arguments "XOR" Xor)
-      <|> (instructionWith1Argument  "NOT" Not)
+  i  <- (instructionWith2Arguments "AND" And)
+    <|> (instructionWith2Arguments "OR" Or)
+    <|> (instructionWith2Arguments "XOR" Xor)
+    <|> (instructionWith1Argument  "NOT" Not)
 
-      <|> (instructionWith2Arguments "MOV" Mov)
+    <|> (instructionWith2Arguments "MOV" Mov)
 
-      <|> (instructionWith1Argument  "RANDOM" Random)
+    <|> (instructionWith1Argument  "RANDOM" Random)
 
-      <|> (instructionWith2Arguments "ADD" Add)
-      <|> (instructionWith2Arguments "SUB" Sub)
+    <|> (instructionWith2Arguments "ADD" Add)
+    <|> (instructionWith2Arguments "SUB" Sub)
 
-      <|> (instructionWith1Argument  "JMP" Jmp)
-      <|> (instructionWith2Arguments "JZ" Jz)
-      <|> (instructionWith3Arguments "JEQ" Jeq)
-      <|> (instructionWith3Arguments "JLS" Jls)
-      <|> (instructionWith3Arguments "JGT" Jgt)
+    <|> (instructionWith1Argument  "JMP" Jmp)
+    <|> (instructionWith2Arguments "JZ" Jz)
+    <|> (instructionWith3Arguments "JEQ" Jeq)
+    <|> (instructionWith3Arguments "JLS" Jls)
+    <|> (instructionWith3Arguments "JGT" Jgt)
 
-      <|> (instructionWith1Argument  "APRINT" Aprint)
-      <|> (instructionWith1Argument  "DPRINT" Dprint)
+    <|> (instructionWith1Argument  "APRINT" Aprint)
+    <|> (instructionWith1Argument  "DPRINT" Dprint)
 
-      <|> (instructionWithoutArgument "HALT" Halt)
-    return (i)
+    <|> (instructionWithoutArgument "HALT" Halt)
+  return (i)
 
 instructionWithoutArgument :: String -> b -> ReadP (Either String b)
 instructionWithoutArgument mne t = do

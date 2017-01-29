@@ -7,7 +7,7 @@ module TinyASM.Instruction (
 
 import TinyASM.ByteCode
 
-data Argument = Address Integer | Literal Integer
+data Argument = Address Int | Literal Int
 
 instance Show Argument where
   show (Address a) = "[" ++ show a ++ "]"

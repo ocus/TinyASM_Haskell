@@ -1,4 +1,4 @@
-MOV [0] 7 ; value1
-NOT [0] ; ~value1
+MOV [0] 7
+NOT [0]
 DPRINT [0]
 HALT

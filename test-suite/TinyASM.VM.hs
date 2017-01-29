@@ -1,8 +1,8 @@
 module Main ( main ) where
 
-import Prelude hiding (drop)
+import Prelude
 import Data.Foldable (toList)
-import Data.Sequence (fromList, Seq)
+-- import Data.Sequence (fromList, Seq)
 import Data.List (intercalate)
 import Data.Bits
 import System.Exit
@@ -18,7 +18,7 @@ main = do
 
   if any (==False) [ success | (success, _) <- programResults ] then exitFailure else return ()
 
-testProgram :: (String, [Instruction], Seq String) -> (Bool, String)
+testProgram :: (String, [Instruction], [String]) -> (Bool, String)
 testProgram (l, p, e) =  (success, "========== Program: " ++ l ++ "" ++ (if not success then "\n" ++ (showVM result) else "") ++ (if not success then showScreen "expected" e else "") ++ " =====> " ++ (status success) ++ "\n")
   where result = executeProgram $ compileInstructions p
         resultScreen = (screen result)
@@ -26,20 +26,20 @@ testProgram (l, p, e) =  (success, "========== Program: " ++ l ++ "" ++ (if not 
         status True = "OK"
         status False = "/!\\ KO /!\\"
 
-executeProgram :: [Integer] -> VM
+executeProgram :: [Int] -> VM
 executeProgram st = run VM {
-          stack = fromList st,
-          memory = fromList [ 0x00 | _ <- [(0 :: Integer)..255] ],
-          screen = fromList []
+          stack = st,
+          memory = [ 0x00 | _ <- [(0 :: Int)..255] ],
+          screen = []
         }
 
 showVM :: VM -> String
 showVM vm@VM {} = (show vm) ++ (showScreen "result" (screen vm))
 
-showScreen :: String -> (Seq String) -> String
+showScreen :: String -> ([String]) -> String
 showScreen label l = "\nScreen (" ++ label ++ "):\n-------\n" ++ (intercalate "\n" (toList l)) ++ "\n-------"
 
-programs :: [(String, [Instruction], Seq String)]
+programs :: [(String, [Instruction], [String])]
 programs = [
     programAnd0x00 1 5,
     programAnd0x01 6 7,
@@ -55,41 +55,41 @@ programs = [
   ]
 
 
-programAnd0x00 :: Integer -> Integer -> (String, [Instruction], Seq String)
+programAnd0x00 :: Int -> Int -> (String, [Instruction], [String])
 programAnd0x00 a b = ("And0x00 " ++ (show a) ++ " " ++ (show b), [
     Mov (Address 0) (Literal a),
     Mov (Address 1) (Literal b),
     And (Address 0) (Address 1),
     Dprint (Address 0),
     Halt
-  ], fromList [show (a .&. b)])
+  ], [show (a .&. b)])
 
-programAnd0x01 :: Integer -> Integer -> (String, [Instruction], Seq String)
+programAnd0x01 :: Int -> Int -> (String, [Instruction], [String])
 programAnd0x01 a b = ("And0x01 " ++ (show a) ++ " " ++ (show b), [
     Mov (Address 0) (Literal a),
     And (Address 0) (Literal b),
     Dprint (Address 0),
     Halt
-  ], fromList [show (a .&. b)])
+  ], [show (a .&. b)])
 
-programAdd0x0a :: Integer -> Integer -> (String, [Instruction], Seq String)
+programAdd0x0a :: Int -> Int -> (String, [Instruction], [String])
 programAdd0x0a a b = ("Add0x0a " ++ (show a) ++ " " ++ (show b), [
     Mov (Address 0) (Literal a),
     Mov (Address 1) (Literal b),
     Add (Address 0) (Address 1),
     Dprint (Address 0),
     Halt
-  ], fromList [show (a + b)])
+  ], [show (a + b)])
 
-programAdd0x0b :: Integer -> Integer -> (String, [Instruction], Seq String)
+programAdd0x0b :: Int -> Int -> (String, [Instruction], [String])
 programAdd0x0b a b = ("Add0x0b " ++ (show a) ++ " " ++ (show b), [
     Mov (Address 0) (Literal a),
     Add (Address 0) (Literal b),
     Dprint (Address 0),
     Halt
-  ], fromList [show (a + b)])
+  ], [show (a + b)])
 
-programJeq0x14 :: Integer -> Integer -> Integer -> Integer -> Integer -> Integer -> (String, [Instruction], Seq String)
+programJeq0x14 :: Int -> Int -> Int -> Int -> Int -> Int -> (String, [Instruction], [String])
 programJeq0x14 a b c d e f = ("Jeq0x14 " ++ (show a) ++ " " ++ (show b) ++ " " ++ (show c) ++ " " ++ (show d) ++ " " ++ (show e) ++ " " ++ (show f) ++ " -> " ++ (show expected), [
     -- if   a == b == c then print f
     -- elif a == c then print d
@@ -107,11 +107,11 @@ programJeq0x14 a b c d e f = ("Jeq0x14 " ++ (show a) ++ " " ++ (show b) ++ " " +
     Halt,
     Dprint (Literal f),
     Halt
-  ], fromList [show expected])
+  ], [show expected])
   where expected = if a == c && a == b then f else (if a == c then e else d)
 
 
-programJeq0x15 :: Integer -> Integer -> Integer -> Integer -> Integer -> Integer -> (String, [Instruction], Seq String)
+programJeq0x15 :: Int -> Int -> Int -> Int -> Int -> Int -> (String, [Instruction], [String])
 programJeq0x15 a b c d e f = ("Jeq0x15 " ++ (show a) ++ " " ++ (show b) ++ " " ++ (show c) ++ " " ++ (show d) ++ " " ++ (show e) ++ " " ++ (show f) ++ " -> " ++ (show expected), [
     -- if   a == b == c then print f
     -- elif a == c then print d
@@ -127,10 +127,10 @@ programJeq0x15 a b c d e f = ("Jeq0x15 " ++ (show a) ++ " " ++ (show b) ++ " " +
     Halt,
     Dprint (Literal f),
     Halt
-  ], fromList [show expected])
+  ], [show expected])
   where expected = if a == c && a == b then f else (if a == c then e else d)
 
-programHalt0xff :: (String, [Instruction], Seq String)
+programHalt0xff :: (String, [Instruction], [String])
 programHalt0xff = ("Halt0xff", [
     Halt
-  ], fromList [])
+  ], [])

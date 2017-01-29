@@ -6,6 +6,6 @@ where
 import TinyASM.Instruction
 import TinyASM.ByteCode
 
-compileInstructions :: [Instruction] -> [Integer]
+compileInstructions :: [Instruction] -> [Int]
 compileInstructions [] = []
 compileInstructions (x:xs) = (compile $ toByteCode x) ++ (compileInstructions xs)
