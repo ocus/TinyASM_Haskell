@@ -118,6 +118,7 @@ test-suite TestParser
                         containers,
                         parsec,
                         directory,
+                        filepath,
                         TinyASM
   default-language:     Haskell2010
   ghc-options:          -fhpc -Wall

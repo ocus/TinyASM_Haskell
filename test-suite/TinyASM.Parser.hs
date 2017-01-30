@@ -7,6 +7,7 @@ import TinyASM.Parser
 import TinyASM.Compiler
 import TinyASM.VM
 import System.Directory
+import System.FilePath.Posix (pathSeparator)
 import Data.List (isInfixOf)
 
 main :: IO ()
@@ -16,9 +17,9 @@ main = do
   --               "test-suite\\programs\\unit\\add_0x0B.asm"
   --             ]
   -- mapM_  runFile files
-
-  allFiles <- getDirectoryContents "test-suite\\programs\\unit\\"
-  let allUnitProgramFiles = reverse $ map ("test-suite\\programs\\unit\\"++) $ filter (isInfixOf "_0x") allFiles
+  let path = "test-suite" ++ [pathSeparator] ++ "programs" ++ [pathSeparator] ++ "unit" ++ [pathSeparator]
+  allFiles <- getDirectoryContents path
+  let allUnitProgramFiles = reverse $ map (path++) $ filter (isInfixOf "_0x") allFiles
   putStrLn $ show allUnitProgramFiles
   mapM_  runFile allUnitProgramFiles
   -- let generatedByteCodeStrings = map toString byteCodes
