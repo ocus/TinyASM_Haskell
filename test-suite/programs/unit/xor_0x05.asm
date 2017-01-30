@@ -1,4 +1,4 @@
-MOV [0] 7
-XOR [0] 15
-DPRINT [0]
-HALT
+0:MOV [0] 7
+3: XOR [0] 15
+ 6:DPRINT [0]
+ 8 :HALT

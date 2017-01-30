@@ -22,14 +22,28 @@ extractInstruction (Right i) = i
 
 instructions :: ReadP [(Either String Instruction)]
 instructions = do
-  is <- sepBy numberedInstruction $ many1 $ string "\n"
+  is <- sepBy prefixedInstruction $ many1 $ string "\n"
   _ <- option "" $ string "\n"
   return (is)
 
-numberedInstruction :: ReadP (Either String Instruction)
-numberedInstruction = do
+prefixedInstruction :: ReadP (Either String Instruction)
+prefixedInstruction = do
+  _ <- option "" prefix
   i <- instruction
   return (i)
+
+prefix :: ReadP String
+prefix = do
+  p  <- munch (\chr -> chr == ' ')
+    <|> prefixColon
+  return (p)
+
+prefixColon :: ReadP String
+prefixColon = do
+  p <- munch1 (\chr -> chr /= ':')
+  _ <- string ":"
+  skipSpaces
+  return (p)
 
 instruction :: ReadP (Either String Instruction)
 instruction = do
