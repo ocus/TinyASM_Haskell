@@ -5,7 +5,7 @@ import System.Exit
 
 main :: IO ()
 main = do
-  let generatedByteCodeStrings = map toString byteCodes
+  let generatedByteCodeStrings = map show byteCodes
       testResults = [
                     generatedByteCodeStrings == expectedByteCodeStrings
                   ]
@@ -22,8 +22,8 @@ byteCodes = [
 
 expectedByteCodeStrings :: [String]
 expectedByteCodeStrings = [
-                          "0x01",
-                          "0x02 0x05",
-                          "0x03 0x06 0x07",
-                          "0x04 0x08 0x09 0x0a"
+                          "ByteCode 0x01",
+                          "ByteCode 0x02 0x05",
+                          "ByteCode 0x03 0x06 0x07",
+                          "ByteCode 0x04 0x08 0x09 0x0a"
                         ]

@@ -8,4 +8,4 @@ import TinyASM.ByteCode
 
 compileInstructions :: [Instruction] -> [Int]
 compileInstructions [] = []
-compileInstructions (x:xs) = (compile $ toByteCode x) ++ (compileInstructions xs)
+compileInstructions (x:xs) = (compileByteCode $ toByteCode x) ++ (compileInstructions xs)

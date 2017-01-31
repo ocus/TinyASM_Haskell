@@ -36,7 +36,7 @@ run:
 
 test:
 	rm -f *.tix
-	cabal test --jobs --show-details=always
+	cabal test --jobs
 	cabal check
 
 testvm:

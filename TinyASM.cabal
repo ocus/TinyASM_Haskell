@@ -48,6 +48,10 @@ extra-source-files:  ChangeLog.md
 -- Constraint on the version of Cabal needed to build this package.
 cabal-version:       >=1.10
 
+source-repository head
+  type:                 git
+  location:             https://github.com/ocus/TinyASM_Haskell
+
 library
   build-depends:        base >=4.9 && <4.10, containers, parsec
   exposed-modules:

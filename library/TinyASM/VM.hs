@@ -1,6 +1,6 @@
 module TinyASM.VM (
   VM(..),
-  Executor(..)
+  run
 )
 where
 
@@ -25,12 +25,10 @@ data VM = VM {
             screen :: Screen
         } deriving (Show)
 
-class Executor a where
-  run :: a -> a
 
-instance Executor VM where
-  run (VM st mem scr) = VM st updatedMem updatedScreen
-    where (_, updatedMem, updatedScreen) = executeAtStackPointer st (Just 0, mem, scr)
+run :: VM -> VM
+run (VM st mem scr) = VM st updatedMem updatedScreen
+  where (_, updatedMem, updatedScreen) = executeAtStackPointer st (Just 0, mem, scr)
 
 executeAtStackPointer :: Stack -> Result -> Result
 executeAtStackPointer st (Just sp, mem, scr) = executeAtStackPointer st $ handleResult $ executeByteCode byteCode (sp, mem, scr)
